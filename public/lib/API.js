@@ -18,7 +18,9 @@ let API = {
     })
   },
   fetchAllBookmarks() {
-    get('/api/links').done( data => ServerActions.recieveLinks(data.links, data.yourIp) );
+    get('/api/links').done( data => {
+      ServerActions.recieveLinks(data.links, data.yourIp)
+    });
   }
 }
 

@@ -703,6 +703,7 @@ $__System.register("2", ["3", "4", "5", "6", "7", "8", "9"], function (_export) 
 
           _get(Object.getPrototypeOf(LinkStore.prototype), "constructor", this).call(this, props);
           AppDispatcher.register(function (action) {
+            console.log("in linkstore", action);
             switch (action.actionType) {
               case ActionTypes.RECEIVE_LINKS:
                 _links = action.links;
@@ -1133,14 +1134,20 @@ $__System.register("12", ["3", "4", "5", "6", "7", "8", "9"], function (_export)
         _inherits(IpStore, _EventEmitter);
 
         function IpStore(props) {
+          var _this = this;
+
           _classCallCheck(this, IpStore);
 
           _get(Object.getPrototypeOf(IpStore.prototype), "constructor", this).call(this, props);
           AppDispatcher.register(function (action) {
+            console.log("action in IPS", action);
             if (_myIp != null) return;
+            console.log('got ip for the first time', action);
             switch (action.actionType) {
-              case ActionTypes.RECIEVE_MYIP:
+              case ActionTypes.RECEIVE_LINKS:
                 _myIp = action.myIp;
+                _this.emit("IP_RECIEVED");
+                console.log('set my ip to ', _myIp);
                 break;
               default:
               //doNothing
@@ -1156,12 +1163,12 @@ $__System.register("12", ["3", "4", "5", "6", "7", "8", "9"], function (_export)
         }, {
           key: "startListening",
           value: function startListening(callback) {
-            this.on("FIRSTCONTACT", callback);
+            this.on("IP_RECIEVED", callback);
           }
         }, {
           key: "stopListening",
           value: function stopListening(callback) {
-            this.removeListener("FIRSTCONTACT", callback);
+            this.removeListener("IP_RECIEVED", callback);
           }
         }]);
 
@@ -1185,8 +1192,7 @@ $__System.register('5', [], function (_export) {
 
       ActionTypes = {
         RECEIVE_LINKS: 'RECEIVE_LINKS',
-        RECIEVE_ONE_LINK: 'RECIEVE_ONE_LINK',
-        RECIEVE_MYIP: "RECIEVE_MYIP"
+        RECIEVE_ONE_LINK: 'RECIEVE_ONE_LINK'
       };
 
       _export('ActionTypes', ActionTypes);
@@ -1362,10 +1368,7 @@ $__System.register("18", ["4", "5"], function (_export) {
         recieveLinks: function recieveLinks(links, myIp) {
           AppDispatcher.dispatch({
             actionType: ActionTypes.RECEIVE_LINKS,
-            links: links
-          });
-          AppDispatcher.dispatch({
-            actionType: ActionTypes.RECIEVE_MYIP,
+            links: links,
             myIp: myIp
           });
         },
@@ -7343,7 +7346,7 @@ $__System.register("1b", ["18", "1a"], function (_export) {
         },
         fetchAllBookmarks: function fetchAllBookmarks() {
           get('/api/links').done(function (data) {
-            return ServerActions.recieveLinks(data.links, data.yourIp);
+            ServerActions.recieveLinks(data.links, data.yourIp);
           });
         }
       };
@@ -7381,7 +7384,7 @@ $__System.register('e', ['1b'], function (_export) {
   };
 });
 $__System.register("1c", ["6", "7", "8", "9", "12", "d", "e"], function (_export) {
-  var _get, _inherits, _createClass, _classCallCheck, IpStore, React, PropTypes, LinkActions, Link;
+  var _get, _inherits, _createClass, _classCallCheck, IpStore, React, PropTypes, LinkActions, _getAppIp, Link;
 
   return {
     setters: [function (_) {
@@ -7403,16 +7406,38 @@ $__System.register("1c", ["6", "7", "8", "9", "12", "d", "e"], function (_export
     execute: function () {
       "use strict";
 
+      _getAppIp = function _getAppIp() {
+        console.log("iip", IpStore.getMyIp());
+        return { ip: IpStore.getMyIp() };
+      };
+
       Link = (function (_React$Component) {
         _inherits(Link, _React$Component);
 
-        function Link() {
+        function Link(props) {
           _classCallCheck(this, Link);
 
-          _get(Object.getPrototypeOf(Link.prototype), "constructor", this).apply(this, arguments);
+          _get(Object.getPrototypeOf(Link.prototype), "constructor", this).call(this, props);
+          this.state = _getAppIp();
+          this._onRecievedIp = this._onRecievedIp.bind(this);
         }
 
         _createClass(Link, [{
+          key: "componentDidMount",
+          value: function componentDidMount() {
+            IpStore.startListening(this._onRecievedIp);
+          }
+        }, {
+          key: "componentWillUnmount",
+          value: function componentWillUnmount() {
+            IpStore.stopListening(this._onRecievedIp);
+          }
+        }, {
+          key: "_onRecievedIp",
+          value: function _onRecievedIp() {
+            this.setState(_getAppIp());
+          }
+        }, {
           key: "deleteBookmark",
           value: function deleteBookmark() {
             LinkActions.deleteBookmark(this.props.link.id);
@@ -7425,7 +7450,7 @@ $__System.register("1c", ["6", "7", "8", "9", "12", "d", "e"], function (_export
         }, {
           key: "render",
           value: function render() {
-            var ip = IpStore.getMyIp();
+            var ip = this.state.ip;
             var _props$link = this.props.link;
             var title = _props$link.title;
             var url = _props$link.url;
@@ -7433,6 +7458,7 @@ $__System.register("1c", ["6", "7", "8", "9", "12", "d", "e"], function (_export
             var favs = _props$link.favs;
 
             var starType = favs.indexOf(ip) != -1 ? "fa fa-star" : "fa fa-star-o";
+            console.log("my ip", ip, favs);
             return React.createElement(
               "div",
               { className: "link" },
@@ -8094,8 +8120,6 @@ $__System.register("36", ["2", "6", "7", "8", "9", "12", "d", "1d", "c", "e"], f
       _getAppState = function _getAppState() {
         return { bookmarks: LinkStore.getAll() };
       };
-
-      // Controller-View Component
 
       AppController = (function (_React$Component) {
         _inherits(AppController, _React$Component);

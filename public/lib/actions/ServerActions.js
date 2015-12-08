@@ -5,10 +5,7 @@ let ServerActions = {
   recieveLinks(links, myIp){
     AppDispatcher.dispatch({
       actionType: ActionTypes.RECEIVE_LINKS,
-      links
-    })
-    AppDispatcher.dispatch({
-      actionType: ActionTypes.RECIEVE_MYIP,
+      links,
       myIp
     })
   },

@@ -23,6 +23,7 @@ router.post('/api/links/delete/:id', function(req, res, next) {
 });
 
 router.get('/api/links', function(req, res, next) {
+  console.log("sending your ip", req.ip);
    res.json({ links: links, yourIp: req.ip });
 });
 

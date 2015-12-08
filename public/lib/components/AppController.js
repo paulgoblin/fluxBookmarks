@@ -11,7 +11,6 @@ let _getAppState = () => {
   return { bookmarks: LinkStore.getAll() }
 }
 
-// Controller-View Component
 class AppController extends React.Component {
   constructor(props) {
     super(props);
