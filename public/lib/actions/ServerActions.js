@@ -3,7 +3,6 @@ import {ActionTypes} from "../Constants"
 
 let ServerActions = {
   recieveLinks(links, myIp){
-    console.log("3. in ServerActions.recieveLinks()", links, myIp);
     AppDispatcher.dispatch({
       actionType: ActionTypes.RECEIVE_LINKS,
       links
@@ -14,7 +13,6 @@ let ServerActions = {
     })
   },
   recieveOneLink(link){
-    console.log("3. in ServerActions.addLink()", link);
     AppDispatcher.dispatch({
       actionType: ActionTypes.RECIEVE_ONE_LINK,
       link

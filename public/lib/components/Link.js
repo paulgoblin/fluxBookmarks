@@ -13,11 +13,10 @@ class Link extends React.Component {
     let ip = IpStore.getMyIp();
     let { title, url, safe, favs } = this.props.link;
     let starType = (favs.indexOf(ip) != -1) ? "fa fa-star" : "fa fa-star-o";
-    console.log("favs", favs);
     return (
       <div className="link">
         <a className="favButton">
-          <i className={starType} onClick={this.toggleFavBookmark.bind(this)}>FAV</i>
+          <i className={starType} onClick={this.toggleFavBookmark.bind(this)}></i>
         </a>
         <a href={url}
            target="_blank"
@@ -25,8 +24,9 @@ class Link extends React.Component {
           {title}
         </a>
         <a className="deleteButton">
-          <i className="fa fa-trash-o" onClick={this.deleteBookmark.bind(this)}>DEL</i>
+          <i className="fa fa-trash-o" onClick={this.deleteBookmark.bind(this)}></i>
         </a>
+        <span className="likes">Likes: {favs.length}</span>
       </div>
     )
   }

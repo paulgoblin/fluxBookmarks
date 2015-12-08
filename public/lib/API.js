@@ -4,7 +4,6 @@ import ServerActions from "./actions/ServerActions"
 let API = {
   toggleFavBookmark(id) {
     post(`/api/links/fav/${id}`).done( data => {
-      console.log('data from api', data)
       ServerActions.recieveLinks(data.links)
     })
   },
