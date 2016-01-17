@@ -1,6 +1,6 @@
 # Bookmark Tracker
 
-React with Flux architecture. Tracks a user's bookmarks by IP.
+React with Flux architecture and [jspm](https://github.com/jspm/jspm-cli). Tracks a user's bookmarks by IP.
 
 Still in the works!
 
